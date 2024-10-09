@@ -24,12 +24,9 @@ RUN apt-get update -qq -y && \
 RUN dpkg-reconfigure locales
 
 # Install Webmin
-RUN echo root:password | chpasswd && \
-    echo "Acquire::GzipIndexes \"false\"; Acquire::CompressionTypes::Order:: \"gz\";" >/etc/apt/apt.conf.d/docker-gzip-indexes && \
-    update-locale LANG=C.UTF-8 && \
-    echo deb https://download.webmin.com/download/repository bookworm contrib >> /etc/apt/sources.list && \
-    wget http://www.webmin.com/jcameron-key.asc && \
+RUN wget -q http://www.webmin.com/jcameron-key.asc && \
     apt-key add jcameron-key.asc && \
+    sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list' && \
     apt-get update && \
     apt-get install -y webmin && \
     apt-get clean && \
