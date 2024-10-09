@@ -27,7 +27,7 @@ RUN dpkg-reconfigure locales
 RUN echo root:password | chpasswd && \
     echo "Acquire::GzipIndexes \"false\"; Acquire::CompressionTypes::Order:: \"gz\";" >/etc/apt/apt.conf.d/docker-gzip-indexes && \
     update-locale LANG=C.UTF-8 && \
-    echo deb https://download.webmin.com/download/repository sarge contrib >> /etc/apt/sources.list && \
+    echo deb https://download.webmin.com/download/repository buster contrib >> /etc/apt/sources.list && \
     wget http://www.webmin.com/jcameron-key.asc && \
     apt-key add jcameron-key.asc && \
     apt-get update && \
