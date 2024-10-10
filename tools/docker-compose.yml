@@ -1,6 +1,37 @@
-version: '3.5'
 name: 'webmin'
 services:
+  db:
+    image: mysql
+    container_name: wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - wp_network
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress_app
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: admin
+      WORDPRESS_DB_NAME: wordpress_db
+    volumes:
+      - ./wordpress:/srv/www
+    depends_on:
+      - db
+    networks:
+      - wp_network
+
   webmin:
     container_name: webmin_master
     privileged: true
@@ -14,3 +45,6 @@ services:
       - "10000:10000"
     cap_add:
       - NET_ADMIN
+networks:
+  wp_network:
+    driver: bridge
