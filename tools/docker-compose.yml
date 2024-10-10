@@ -9,6 +9,7 @@ services:
     volumes:
       - ../docker:/usr/share/webmin/docker:rw
       - ./dind:/home/dind:rw
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "10000:10000"
     cap_add:

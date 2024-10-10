@@ -20,16 +20,19 @@ RUN apt-get update -qq -y && \
        net-tools \
        vim \
        docker \ 
-       docker-compose
+       docker-compose &&  \
+       apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN dpkg-reconfigure locales
 
 # Install Webmin
-RUN wget -q http://www.webmin.com/jcameron-key.asc && \
-    apt-key add jcameron-key.asc && \
-    sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list' && \
+RUN echo "root:password" | chpasswd && \
+    echo "Acquire::GzipIndexes \"false\"; Acquire::CompressionTypes::Order:: \"gz\";" > /etc/apt/apt.conf.d/docker-gzip-indexes && \
+    update-locale LANG=C.UTF-8 && \
+    wget -qO- http://www.webmin.com/jcameron-key.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/webmin.gpg && \
+    echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list && \
     apt-get update && \
-    apt-get install -y webmin && \
-    apt-get clean && \
+    apt-get install -y --no-install-recommends webmin && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     echo "$(cat /etc/webmin/webmin.acl) docker" > /etc/webmin/webmin.acl
 
 EXPOSE 10000
